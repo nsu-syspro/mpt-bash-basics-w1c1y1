@@ -29,6 +29,12 @@ jobs:
     - uses: education/autograding@v1
       id: autograder
 
+    - name: Check solutions
+      uses: ludeeus/action-shellcheck@master
+      with:
+        scandir: './solution'
+      if: success() || failure()
+
     ############################
     # Generate points bar badge
     #
