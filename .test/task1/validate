@@ -41,7 +41,7 @@ function fail() {
 
 function test_solution() {
   "$SCRIPT" "$ARCHIVE_NAME"
-  diff -r -U 1000 "$EXPECTED" "$ARCHIVE_NAME.unpacked/root" || fail
+  diff --color=always -r -U 1000 "$EXPECTED" "$ARCHIVE_NAME.unpacked/root" || fail
 }
 
 

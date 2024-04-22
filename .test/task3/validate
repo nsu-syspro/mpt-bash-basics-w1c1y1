@@ -29,7 +29,7 @@ function fail() {
 
 function test_solution() {
   "$SCRIPT" "$@"
-  diff -U 1000 <(echo "$EXPECTED") <(ls -A -1) || fail "$@"
+  diff --color=always -U 1000 <(echo "$EXPECTED") <(ls -A -1) || fail "$@"
 }
 
 

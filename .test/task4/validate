@@ -36,7 +36,7 @@ function test_solution() {
     echo "$ACTUAL"
     fail "$@"
   fi
-  diff -U 1000 <(echo "$EXPECTED") <(echo "$ACTUAL") || fail "$@"
+  diff --color=always -U 1000 <(echo "$EXPECTED") <(echo "$ACTUAL") || fail "$@"
 }
 
 
