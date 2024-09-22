@@ -85,6 +85,13 @@ jobs:
       with:
         runners: task-1,task-2,task-3,task-4
 
+    # Run Shellcheck on solutions
+    - name: Check solutions
+      uses: ludeeus/action-shellcheck@master
+      with:
+        scandir: './solution'
+      if: success() || failure()
+
   ############################
   # Generate points bar badge
   #
