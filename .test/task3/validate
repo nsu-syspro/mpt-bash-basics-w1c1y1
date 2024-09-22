@@ -28,7 +28,14 @@ function fail() {
 }
 
 function test_solution() {
-  "$SCRIPT" "$@"
+  set +e
+  ACTUAL=$("$SCRIPT" "$@" 2>&1)
+  ACTUAL_EXIT=$?
+  set -e
+  if [[ $ACTUAL_EXIT -ne 0 ]]; then
+    echo "$ACTUAL"
+    fail "$@"
+  fi
   diff --color=always -U 1000 <(echo "$EXPECTED") <(ls -A -1) || fail "$@"
 }
 

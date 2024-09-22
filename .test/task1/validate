@@ -40,51 +40,75 @@ function fail() {
 }
 
 function test_solution() {
-  "$SCRIPT" "$ARCHIVE_NAME"
+  set +e
+  ACTUAL=$("$SCRIPT" "$ARCHIVE_NAME" 2>&1)
+  ACTUAL_EXIT=$?
+  set -e
+  if [[ $ACTUAL_EXIT -ne 0 ]]; then
+    echo "$ACTUAL"
+    fail
+  fi
+  diff --color=always -U 1000 <(echo "") <(echo "$ACTUAL") || fail
   diff --color=always -r -U 1000 "$EXPECTED" "$ARCHIVE_NAME.unpacked/root" || fail
 }
 
 
-echo "Test case #1 (simple)"
+echo "Test case #1 (simple absolute path)"
 
 ARCHIVE_NAME="$TMP_DIR/test.tar"
 rm -rf "$ARCHIVE_NAME.unpacked"
 cd "$TMP_DIR"
 tar cf "$ARCHIVE_NAME" "root"
 cd "$ROOT_DIR" && test_solution
+rm -rf "$ARCHIVE_NAME.unpacked"
 
 
-echo "Test case #2 (overwriting target dir)"
+echo "Test case #2 (simple relative path)"
+
+ARCHIVE_NAME="test.tar"
+rm -rf "$ROOT_DIR/$ARCHIVE_NAME.unpacked"
+cd "$TMP_DIR"
+tar cf "$ARCHIVE_NAME" "root"
+cp "$ARCHIVE_NAME" "$ROOT_DIR/$ARCHIVE_NAME"
+cd "$ROOT_DIR" && test_solution
+rm -rf "$ROOT_DIR/$ARCHIVE_NAME.unpacked"
+
+
+echo "Test case #3 (overwriting target dir)"
 
 ARCHIVE_NAME="$TMP_DIR/test.tar"
-touch "$ARCHIVE_NAME.unpacked/root" # check overwriting
+mkdir -p "$ARCHIVE_NAME.unpacked/root" # check overwriting
 cd "$TMP_DIR"
 tar cf "$ARCHIVE_NAME" "root"
 cd "$ROOT_DIR" && test_solution
+rm -rf "$ARCHIVE_NAME.unpacked"
 
 
-echo "Test case #3 (compressed with gzip)"
+echo "Test case #4 (compressed with gzip)"
 
 ARCHIVE_NAME="$TMP_DIR/test.tar.gz"
 rm -rf "$ARCHIVE_NAME.unpacked"
 cd "$TMP_DIR"
 tar cfz "$ARCHIVE_NAME" "root"
 cd "$ROOT_DIR" && test_solution
+rm -rf "$ARCHIVE_NAME.unpacked"
 
 
-echo "Test case #4 (compressed with xz)"
+echo "Test case #5 (compressed with xz)"
 
 ARCHIVE_NAME="$TMP_DIR/test.tar.xz"
 rm -rf "$ARCHIVE_NAME.unpacked"
 cd "$TMP_DIR"
 tar cfJ "$ARCHIVE_NAME" "root"
 cd "$ROOT_DIR" && test_solution
+rm -rf "$ARCHIVE_NAME.unpacked"
 
 
-echo "Test case #5 (name with spaces)"
+echo "Test case #6 (name with spaces)"
 
 ARCHIVE_NAME="$TMP_DIR/test name.tar"
 rm -rf "$ARCHIVE_NAME.unpacked"
 cd "$TMP_DIR"
 tar cf "$ARCHIVE_NAME" "root"
 cd "$ROOT_DIR" && test_solution
+rm -rf "$ARCHIVE_NAME.unpacked"
