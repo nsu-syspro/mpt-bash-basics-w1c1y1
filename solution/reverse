@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+result=""
+while read -r input_line; do
+	result="$input_line"$'\n'"$result"
+done
+echo "$result"
